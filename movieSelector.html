@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="english">
+    <head>
+        <title>Movie Selector</title>
+        <link rel="stylesheet" href="assets/css/movieSelectorStyle.css">
+        <script src="assets/js/movieSelector.js"></script>
+    </head>
+    <body>
+        <div class="header">
+            <h1>Movie Selector</h1>
+        </div>
+
+        <div class="input-container">
+            <input type="text" id="movieInput" placeholder="Enter movie name" style="font-size: 25px;" onkeydown="if(event.keyCode === 13) printMovieName()">
+                <!-- <button class = "button" onclick="printMovieName()">
+                    Submit
+                </button> -->
+        </div>
+
+        <div class = "input-container" >
+            <button class = "button" onclick="selectRandomMovie()">
+                Select Movie
+            </button>
+        </div>
+
+        <div id="movieList" display= "flex" flex-direction="column" align-items="center" justify-content="center" height="100vh" margin="0" style="display: flex">
+            <!-- Movies will be added here as div elements -->
+        </div>
+
+        <div id="popup">
+            <span id="popupClose" onclick="closePopup()">X</span>
+            <p id="popupContent"></p>
+        </div>
+    </body>
+</html>
