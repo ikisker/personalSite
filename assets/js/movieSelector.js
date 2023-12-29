@@ -44,7 +44,8 @@ function selectRandomMovie() {
         document.getElementById("popupContent").textContent = "Selected Movie: " + randomMovie;
         document.getElementById("popup").style.display = "block";
     } else {
-        alert("Please add movies before selecting one.");
+        document.getElementById("popupContent").textContent = "Please enter at least one movie";
+        document.getElementById("popup").style.display = "block";
     }
 }
 
