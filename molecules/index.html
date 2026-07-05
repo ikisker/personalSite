@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Molecular Orbital Models — printable STLs</title>
+  <meta name="description" content="Generate 3D-printable molecular orbital models with connection holes tuned to your model kit. Free STL downloads for teachers." />
+  <link rel="icon" href="data:," />
+  <script type="module" crossorigin src="./assets/index-fpMsCdmX.js"></script>
+  <link rel="stylesheet" crossorigin href="./assets/index-CRKjv0bi.css">
+</head>
+<body>
+  <header>
+    <h1>Molecular Orbital Models</h1>
+    <p class="tagline">
+      Print-ready orbital shapes for your molecular model kit. Pick a model, tune the
+      connection hole to fit your kit's pegs and your printer, and download the STL.
+    </p>
+  </header>
+
+  <main>
+    <section class="tool">
+      <div class="viewer-pane">
+        <canvas id="viewer"></canvas>
+        <div id="status" class="status" hidden></div>
+      </div>
+
+      <div class="controls" id="controls">
+        <label for="model-select">Model</label>
+        <select id="model-select"></select>
+
+        <label for="preset-select">Connection preset</label>
+        <select id="preset-select"></select>
+
+        <label for="dia-number">Hole diameter <span class="unit">(mm, as printed)</span></label>
+        <input type="number" id="dia-number" />
+
+        <p class="model-notes" id="model-notes"></p>
+
+        <button type="button" id="download" disabled>Download STL</button>
+      </div>
+    </section>
+
+    <section class="usage">
+      <h2>Using these with your kit</h2>
+      <p>
+        These parts attach to the ball-and-stick molecular model kits you already own:
+        each model has one or more sockets sized to slide onto your kit's pegs. Measure a
+        peg with calipers, print one, and nudge the hole diameter up or down by
+        0.1&nbsp;mm until the fit is snug. The diameter you set is
+        the hole as designed. Most printers shrink holes slightly, so going a touch
+        over your peg size is normal.
+      </p>
+    </section>
+  </main>
+
+  <footer>
+    <p>
+      <a href="https://creativecommons.org/licenses/by/4.0/" rel="license">CC BY 4.0</a>
+        * free to print, share, and adapt with attribution to
+      <a href="https://isaackisker.com">Isaac Kisker</a>.
+    </p>
+  </footer>
+
+</body>
+</html>
