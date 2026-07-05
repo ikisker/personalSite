@@ -92,9 +92,10 @@ CUSTOM_POLAR_HOLES = [
     [[ HALF, -HALF, ZC - DIAG], [-1,  1,  SQ2], 5, false],
 ];
 PRESETS = [
-    STD,                                 // preset 0 "Standard": lobe tips + z poles
-    concat(STD, DIAGS),                  // preset 1 "Full": adds the in-plane diagonals
-    concat(STD, CUSTOM_POLAR_HOLES),     // preset 2 "polar": adds the 8 new polar holes
+    STD,                                     // preset 0 "Standard": lobe tips + z poles
+    concat(STD, DIAGS),                      // preset 1 "Full": adds the in-plane diagonals
+    concat(STD, CUSTOM_POLAR_HOLES),         // preset 2 "Custom Top/Bottom": adds the 8 new polar holes
+    concat(STD, DIAGS, CUSTOM_POLAR_HOLES),  // preset 3 "All": every single hole defined
 ];
 
 sockets = PRESETS[preset];

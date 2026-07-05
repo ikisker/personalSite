@@ -25,8 +25,9 @@
     "scad": "models/d-xy.scad",
     "presets": [
       { "value": 0, "label": "Standard" },
-      { "value": 1, "label": "45's" },
-      { "value": 2, "label": "Polar" }
+      { "value": 1, "label": "Adds diagonal sockets" },
+      { "value": 2, "label": "Polar" },
+      { "value": 3, "label": "All" }
     ],
     "diameter": { "min": 2.0, "max": 7.0, "default": 5.0, "step": 0.01 },
     "phaseFn": "dxy",
