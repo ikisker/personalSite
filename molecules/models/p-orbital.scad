@@ -21,10 +21,8 @@ POLE    = CX + R_SPH;                 // lobe tip on x = 15.3875
 TIP_BOT = 9.875;                      // tip-socket flat bottom, |x| (from the STEP)
 NECK_R  = sqrt(R_SPH*R_SPH - CX*CX);  // waist radius = 3.070
 FLAT_CUT  = 0;      // trimmed off each lobe underside for a stable print face
-BOSS_WALL = 0.5;    // material kept around the waist socket when boss is on.
-                    // 0.5 keeps the ball flush inside the 3.07 neck at the
-                    // reference Ø5; a bead emerges only at larger holes,
-                    // where the bare neck wall would drop below it.
+BOSS_WALL = 1.2;    // Updated to match d-z2: material kept around the socket 
+                    // to provide a proper structural collar.
 EPS = 0.01;
 
 FLAT_Z = -(R_SPH - FLAT_CUT);   // underside flat plane in the centered frame = −6
@@ -58,10 +56,11 @@ module socket_hole(s) {
         translate([0, 0, -EPS]) cylinder(h = s[2] + EPS, d = hole_diameter);
 }
 
-// Waist support: a concentric ball at the socket bottom (see header) — the
-// spherical neck wants a ball, not d-z2's radial cylinder into a tube.
+// Replaced the spherical boss with the oriented cylindrical guide from d-z2
+// This ensures the boss supports the entire length of the hole.
 module socket_boss(s) {
-    translate(s[0]) sphere(r = hole_diameter / 2 + BOSS_WALL);
+    translate(s[0]) orient(s[1])
+        cylinder(h = s[2], d = hole_diameter + 2 * BOSS_WALL);
 }
 
 module body() {

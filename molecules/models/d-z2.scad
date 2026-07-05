@@ -1,4 +1,4 @@
-// d-z2.scad — CC BY 4.0, Isaac Kisker (isaackisker.com/molecules)
+ // d-z2.scad — CC BY 4.0, Isaac Kisker (isaackisker.com/molecules)
 //
 // 3d_z² orbital: two axial teardrop lobes + equatorial ring, one body.
 //   lobes  — spheres R11.5, centers 30 apart, side walls blended by R90
@@ -9,7 +9,7 @@
 //   sockets — 2 axial into the lobe poles, 4 radial into the ring outer
 //            equator along ±x/±y (Ø5 × 6.5 deep)
 
-preset = 0;          // [0:Standard]
+preset = 2;          // [0:Standard, 1:Tetrahedral, 2:All]
 hole_diameter = 5.0; // [2.0:0.01:7.0]
 
 /* [Hidden] */
@@ -42,22 +42,41 @@ ARC_A0 = -160.0553; // arc from that tangency...
 ARC_A1 = -165.1104; // ...to its intersection with the ring tube circle
 RING_A = -108.7742; // ring tube angle at that intersection
 
-// A socket is [position, direction, depth, boss].
-PRESETS = [
-    // preset 0 "Standard": both lobe poles axially, ring at ±x/±y radially.
-    // Depths from the STEP: pole holes seat 4.725 (drawing's 4.72), ring
-    // holes 6.5. The top depth is measured from the pole tip so the hole
-    // bottom lands where the STEP puts it.
-    [
-        [[0, 0, 0],           [ 0,  0,  1], 4.725, false],
-        [[0, 0, TOP],         [ 0,  0, -1], 5.0,   false],
-        [[ RING_OUT, 0, ZR],  [-1,  0,  0], 6.5,   true],
-        [[-RING_OUT, 0, ZR],  [ 1,  0,  0], 6.5,   true],
-        [[0,  RING_OUT, ZR],  [ 0, -1,  0], 6.5,   true],
-        [[0, -RING_OUT, ZR],  [ 0,  1,  0], 6.5,   true],
-    ]
+// Tetrahedral Socket Configuration
+R_TETRA = 11.0;     // Base distance from center to the outer face of the tetrahedral boss
+D_TETRA = 6.5;      // Depth of the tetrahedral hole
+T_TETRA = 27.0;     // [0:0.01:90] Tilt angle for the sockets (tuned to 29 deg)
+O_TETRA = 2.0;      // Outward offset to prevent the bottom of the hole from clipping the lobe
+
+EFF_R_TETRA = R_TETRA + O_TETRA; // Total distance from center to socket face
+
+// Parameterized symmetric tetrahedral vectors using spherical coordinates
+T1 = [ cos(45)*cos(T_TETRA),  sin(45)*cos(T_TETRA),  sin(T_TETRA) ];
+T2 = [ cos(225)*cos(T_TETRA), sin(225)*cos(T_TETRA), sin(T_TETRA) ];
+T3 = [ cos(315)*cos(T_TETRA), sin(315)*cos(T_TETRA), -sin(T_TETRA) ];
+T4 = [ cos(135)*cos(T_TETRA), sin(135)*cos(T_TETRA), -sin(T_TETRA) ];
+
+STD = [
+    [[0, 0, 0],           [ 0,  0,  1], 4.725, false],
+    [[0, 0, TOP],         [ 0,  0, -1], 5.0,   false],
+    [[ RING_OUT, 0, ZR],  [-1,  0,  0], 6.5,   true],
+    [[-RING_OUT, 0, ZR],  [ 1,  0,  0], 6.5,   true],
+    [[0,  RING_OUT, ZR],  [ 0, -1,  0], 6.5,   true],
+    [[0, -RING_OUT, ZR],  [ 0,  1,  0], 6.5,   true],
 ];
 
+TETRA = [
+        [[ T1[0]*EFF_R_TETRA, T1[1]*EFF_R_TETRA, ZR + T1[2]*EFF_R_TETRA ], -T1, D_TETRA, true],
+        [[ T2[0]*EFF_R_TETRA, T2[1]*EFF_R_TETRA, ZR + T2[2]*EFF_R_TETRA ], -T2, D_TETRA, true],
+        [[ T3[0]*EFF_R_TETRA, T3[1]*EFF_R_TETRA, ZR + T3[2]*EFF_R_TETRA ], -T3, D_TETRA, true],
+        [[ T4[0]*EFF_R_TETRA, T4[1]*EFF_R_TETRA, ZR + T4[2]*EFF_R_TETRA ], -T4, D_TETRA, true]
+];
+// A socket is [position, direction, depth, boss].
+PRESETS = [
+    STD,// preset 0 "Standard": both lobe poles axially, ring at ±x/±y radially.
+    TETRA,// preset 1 "Tetrahedral": 4 symmetric sockets for sp3 bonds, bosses enabled for structural support.
+    concat(STD, TETRA),// preset 2 All 
+];
 sockets = PRESETS[preset];
 
 // Half of the revolved outline: sphere (from a0 up to the arc tangency),

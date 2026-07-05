@@ -13,7 +13,11 @@
     "id": "d-z2",
     "name": "3d_z² orbital",
     "scad": "models/d-z2.scad",
-    "presets": [{ "value": 0, "label": "Standard" }],
+    "presets": [
+      { "value": 0, "label": "Standard" },
+      { "value": 1, "label": "Tetrahedral" },
+      { "value": 2, "label": "All" }
+    ],
     "diameter": { "min": 2.0, "max": 7.0, "default": 5.0, "step": 0.01 },
     "phaseFn": "dz2",
     "notes": null,
@@ -25,8 +29,8 @@
     "scad": "models/d-xy.scad",
     "presets": [
       { "value": 0, "label": "Standard" },
-      { "value": 1, "label": "Adds diagonal sockets" },
-      { "value": 2, "label": "Polar" },
+      { "value": 1, "label": "Equatorial Expanded" },
+      { "value": 2, "label": "Cuboctahedral" },
       { "value": 3, "label": "All" }
     ],
     "diameter": { "min": 2.0, "max": 7.0, "default": 5.0, "step": 0.01 },
