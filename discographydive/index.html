@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Discography Deep Dive</title>
+  <script type="module" crossorigin src="./assets/index-BFd4aqtB.js"></script>
+  <link rel="modulepreload" crossorigin href="./assets/csv-C0zK_DkG.js">
+  <link rel="stylesheet" crossorigin href="./assets/csv-509UhfLs.css">
+</head>
+<body>
+  <header>
+    <h1>Discography Deep Dive</h1>
+    <p class="tagline">Every song an artist released, in the order they released it.</p>
+    <p class="sibling-link"><a href="./vibevoyage/">Try Vibe Voyage → songs whose titles match a word or regex</a></p>
+  </header>
+
+  <main>
+    <form id="search-form">
+      <input id="search-input" type="search" placeholder="Artist name…" autocomplete="off" required />
+      <button type="submit">Search</button>
+    </form>
+
+    <ul id="artist-list" hidden></ul>
+
+    <section id="progress" hidden>
+      <p id="progress-label"></p>
+      <progress id="progress-bar" max="1" value="0"></progress>
+    </section>
+
+    <section id="results" hidden>
+      <div class="results-header">
+        <h2 id="results-title"></h2>
+        <p id="results-stats"></p>
+        <fieldset id="mode-toggle">
+          <legend>When a song appears more than once, keep the…</legend>
+          <label><input type="radio" name="mode" value="earliest" checked /> earliest release</label>
+          <label><input type="radio" name="mode" value="album" /> album version</label>
+        </fieldset>
+        <div class="export-row">
+          <button id="csv-btn">Download CSV</button>
+          <button id="spotify-btn">Create Spotify playlist</button>
+          <span id="spotify-note">Spotify unavailable right now — the CSV imports anywhere.</span>
+        </div>
+        <p id="spotify-status" hidden></p>
+      </div>
+      <div id="tracklist"></div>
+    </section>
+
+    <p id="error" hidden></p>
+  </main>
+
+  <footer>
+    <p>
+      Data from <a href="https://open.spotify.com/" target="_blank" rel="noopener">Spotify</a>
+      (falling back to <a href="https://musicbrainz.org/" target="_blank" rel="noopener">MusicBrainz</a>).
+      Playlists are created on the site's Spotify account — open the link and hit
+      “Add to library” to keep one. CSV downloads import into Spotify or Apple Music via
+      <a href="https://www.tunemymusic.com/" target="_blank" rel="noopener">TuneMyMusic</a> or
+      <a href="https://soundiiz.com/" target="_blank" rel="noopener">Soundiiz</a>.
+    </p>
+  </footer>
+
+</body>
+</html>

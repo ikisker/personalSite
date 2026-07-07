@@ -3,23 +3,26 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Discography Deep Dive</title>
-  <script type="module" crossorigin src="./assets/index-Brta5daN.js"></script>
-  <link rel="stylesheet" crossorigin href="./assets/index-C78wbqo6.css">
+  <title>Vibe Voyage</title>
+  <script type="module" crossorigin src="../assets/index-C91OCfGd.js"></script>
+  <link rel="modulepreload" crossorigin href="../assets/csv-C0zK_DkG.js">
+  <link rel="stylesheet" crossorigin href="../assets/csv-509UhfLs.css">
 </head>
 <body>
   <header>
-    <h1>Discography Deep Dive</h1>
-    <p class="tagline">Every song an artist released, in the order they released it.</p>
+    <h1>Vibe Voyage</h1>
+    <p class="tagline">Every song whose title matches your vibe, in the order they were released.</p>
+    <p class="sibling-link"><a href="../">← Discography Deep Dive</a></p>
   </header>
 
   <main>
     <form id="search-form">
-      <input id="search-input" type="search" placeholder="Artist name…" autocomplete="off" required />
+      <input id="search-input" type="search" placeholder="A word, a phrase, or a regex…" autocomplete="off" required />
+      <label class="regex-toggle"><input id="regex-toggle" type="checkbox" /> regex</label>
       <button type="submit">Search</button>
     </form>
-
-    <ul id="artist-list" hidden></ul>
+    <p class="hint">Searches song titles on Spotify — capped at its first 1,000 results.
+      Regex patterns need at least one literal word to seed the search.</p>
 
     <section id="progress" hidden>
       <p id="progress-label"></p>
@@ -30,19 +33,13 @@
       <div class="results-header">
         <h2 id="results-title"></h2>
         <p id="results-stats"></p>
-        <fieldset id="mode-toggle">
-          <legend>When a song appears more than once, keep the…</legend>
-          <label><input type="radio" name="mode" value="earliest" checked /> earliest release</label>
-          <label><input type="radio" name="mode" value="album" /> album version</label>
-        </fieldset>
         <div class="export-row">
           <button id="csv-btn">Download CSV</button>
           <button id="spotify-btn">Create Spotify playlist</button>
-          <span id="spotify-note">Spotify unavailable right now — the CSV imports anywhere.</span>
         </div>
         <p id="spotify-status" hidden></p>
       </div>
-      <div id="tracklist"></div>
+      <ol id="tracklist" class="vibe-list"></ol>
     </section>
 
     <p id="error" hidden></p>
@@ -50,8 +47,7 @@
 
   <footer>
     <p>
-      Data from <a href="https://open.spotify.com/" target="_blank" rel="noopener">Spotify</a>
-      (falling back to <a href="https://musicbrainz.org/" target="_blank" rel="noopener">MusicBrainz</a>).
+      Data from <a href="https://open.spotify.com/" target="_blank" rel="noopener">Spotify</a>.
       Playlists are created on the site's Spotify account — open the link and hit
       “Add to library” to keep one. CSV downloads import into Spotify or Apple Music via
       <a href="https://www.tunemymusic.com/" target="_blank" rel="noopener">TuneMyMusic</a> or
