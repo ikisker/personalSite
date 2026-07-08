@@ -1,14 +1,15 @@
- // d-z2.scad — CC BY 4.0, Isaac Kisker (isaackisker.com/molecules)
+// d-z2.scad — CC BY 4.0, Isaac Kisker (isaackisker.com/molecules)
 //
 // 3d_z² orbital: two axial teardrop lobes + equatorial ring, one body.
-//   lobes  — spheres R11.5, centers 30 apart, side walls blended by R90
-//            arcs tangent to the spheres (arc centers 101.5 = 90 + 11.5
-//            from the sphere centers)
-//   ring   — torus, tube-center radius 9.625, tube radius 3.7, on the
-//            mid-plane (outer radius 13.325)
+//   lobes   — spheres R11.5, centers 30 apart, side walls blended by R90
+//             arcs tangent to the spheres (arc centers 101.5 = 90 + 11.5
+//             from the sphere centers)
+//   ring    — torus, tube-center radius 9.625, tube radius 3.7, on the
+//             mid-plane (outer radius 13.325)
 //   sockets — 2 axial into the lobe poles, 4 radial into the ring outer
-//            equator along ±x/±y (Ø5 × 6.5 deep)
+//             equator along ±x/±y (Ø5 × 5 deep)
 
+// --- Customizer parameters ---
 preset = 2;          // [0:Standard, 1:Tetrahedral, 2:All]
 hole_diameter = 5.0; // [2.0:0.01:7.0]
 
@@ -16,19 +17,28 @@ hole_diameter = 5.0; // [2.0:0.01:7.0]
 $fa = 3;
 $fs = 0.4;
 
+// --- Shape constants ---
 R_SPH   = 11.5;    // lobe end-cap sphere radius
 LOBE_CC = 30;      // spacing between the two sphere centers
 RING_R  = 9.625;   // ring tube-center radius
 RING_T  = 3.7;     // ring tube radius
 ARC_R   = 90;      // lobe side-wall arc radius
-ARC_CX  = 95.4122; // arc center (r, z) in the lower-sphere frame
-ARC_CZ  = 34.6230;
-FLAT_CUT  = 0;     // trimmed off the bottom pole: stable print face
-BOSS_WALL = 1.2;   // material kept around a socket when the boss is enabled.
+A_TAN   = 20;      // sphere/arc tangency angle at the sphere center — shape input
+
+// --- Build constants ---
+FLAT_CUT  = 0;     // trimmed off the bottom pole for a stable print face
+BOSS_WALL = 1.2;   // material kept around a socket when its boss is enabled.
                    // 1.2 keeps the ring bosses flush inside the 7.4 tube at
                    // the reference Ø5 hole; a collar emerges only at larger
                    // holes, where the bare tube wall would drop below 1.2.
-EPS = 0.01;
+EPS       = 0.01;  // overshoot so cut faces clear the surface cleanly
+PEG_DEPTH = 5;     // socket hole depth — one peg length for every socket
+
+// --- Derived geometry ---
+// Arc center as an (r, z) offset from a sphere center: the arc is tangent to
+// the sphere, so its center lies R_SPH + ARC_R away along the A_TAN direction.
+ARC_CX = (R_SPH + ARC_R) * cos(A_TAN);
+ARC_CZ = (R_SPH + ARC_R) * sin(A_TAN);
 
 Z0  = R_SPH - FLAT_CUT;   // lower sphere center height
 ZR  = Z0 + LOBE_CC / 2;   // ring mid-plane
@@ -36,49 +46,64 @@ Z1  = Z0 + LOBE_CC;       // upper sphere center
 TOP = Z1 + R_SPH;         // top pole
 RING_OUT = RING_R + RING_T;
 
-// Profile angles (degrees) derived from the STEP surfaces:
-A_TAN  = 19.9447;   // sphere/arc tangency, measured at the sphere center
-ARC_A0 = -160.0553; // arc from that tangency...
-ARC_A1 = -165.1104; // ...to its intersection with the ring tube circle
-RING_A = -108.7742; // ring tube angle at that intersection
+// Both intersection points of two circles (centers c1, c2; radii r1, r2).
+function circle_isect(c1, r1, c2, r2) =
+    let (d = norm(c2 - c1),
+         a = (d * d + r1 * r1 - r2 * r2) / (2 * d),
+         h = sqrt(r1 * r1 - a * a),
+         m = c1 + a * (c2 - c1) / d,
+         u = [-(c2[1] - c1[1]), c2[0] - c1[0]] / d)
+    [m + h * u, m - h * u];
 
-// Tetrahedral Socket Configuration
-R_TETRA = 11.0;     // Base distance from center to the outer face of the tetrahedral boss
-D_TETRA = 6.5;      // Depth of the tetrahedral hole
-T_TETRA = 27.0;     // [0:0.01:90] Tilt angle for the sockets (tuned to 29 deg)
-O_TETRA = 2.0;      // Outward offset to prevent the bottom of the hole from clipping the lobe
+// Profile angles
+ARC_A0 = A_TAN - 180;   // arc starts at the sphere tangency, pointing back at
+                        // the sphere center
+// The arc ends where the R90 arc crosses the ring tube circle; take the lower
+// crossing. Ring center in the sphere-center frame is (RING_R, LOBE_CC/2).
+XPT    = let (p = circle_isect([ARC_CX, ARC_CZ], ARC_R,
+                               [RING_R, LOBE_CC / 2], RING_T))
+         p[0][1] < p[1][1] ? p[0] : p[1];
+ARC_A1 = atan2(XPT[1] - ARC_CZ, XPT[0] - ARC_CX);      // arc end at that crossing
+RING_A = atan2(XPT[1] - LOBE_CC / 2, XPT[0] - RING_R); // ring tube angle there
 
-EFF_R_TETRA = R_TETRA + O_TETRA; // Total distance from center to socket face
+// Tetrahedral socket configuration (preset 1)
+R_TETRA = 11.0;      // base distance from center to the tetrahedral boss face
+T_TETRA = 27.0;      // [0:0.01:90] socket tilt angle (tuned to 27 deg)
+O_TETRA = 2.0;       // outward offset so the hole bottom clears the lobe
+EFF_R_TETRA = R_TETRA + O_TETRA; // total distance from center to socket face
 
-// Parameterized symmetric tetrahedral vectors using spherical coordinates
-T1 = [ cos(45)*cos(T_TETRA),  sin(45)*cos(T_TETRA),  sin(T_TETRA) ];
-T2 = [ cos(225)*cos(T_TETRA), sin(225)*cos(T_TETRA), sin(T_TETRA) ];
+// Symmetric tetrahedral direction vectors (spherical coords)
+T1 = [ cos(45)*cos(T_TETRA),  sin(45)*cos(T_TETRA),   sin(T_TETRA) ];
+T2 = [ cos(225)*cos(T_TETRA), sin(225)*cos(T_TETRA),  sin(T_TETRA) ];
 T3 = [ cos(315)*cos(T_TETRA), sin(315)*cos(T_TETRA), -sin(T_TETRA) ];
 T4 = [ cos(135)*cos(T_TETRA), sin(135)*cos(T_TETRA), -sin(T_TETRA) ];
 
+// --- Sockets --- (a socket is [position, direction, depth, boss, clear])
+// clear (optional, default false): also cut geometry overhanging the insertion
+// path. Left off for the tetrahedral sockets — they bore into the lobes and
+// must not carve a channel out the far side.
 STD = [
-    [[0, 0, 0],           [ 0,  0,  1], 4.725, false],
-    [[0, 0, TOP],         [ 0,  0, -1], 5.0,   false],
-    [[ RING_OUT, 0, ZR],  [-1,  0,  0], 6.5,   true],
-    [[-RING_OUT, 0, ZR],  [ 1,  0,  0], 6.5,   true],
-    [[0,  RING_OUT, ZR],  [ 0, -1,  0], 6.5,   true],
-    [[0, -RING_OUT, ZR],  [ 0,  1,  0], 6.5,   true],
+    [[0, 0, 0],           [ 0,  0,  1], PEG_DEPTH, false],
+    [[0, 0, TOP],         [ 0,  0, -1], PEG_DEPTH, false],
+    [[ RING_OUT, 0, ZR],  [-1,  0,  0], PEG_DEPTH, true],
+    [[-RING_OUT, 0, ZR],  [ 1,  0,  0], PEG_DEPTH, true],
+    [[0,  RING_OUT, ZR],  [ 0, -1,  0], PEG_DEPTH, true],
+    [[0, -RING_OUT, ZR],  [ 0,  1,  0], PEG_DEPTH, true],
 ];
-
 TETRA = [
-        [[ T1[0]*EFF_R_TETRA, T1[1]*EFF_R_TETRA, ZR + T1[2]*EFF_R_TETRA ], -T1, D_TETRA, true],
-        [[ T2[0]*EFF_R_TETRA, T2[1]*EFF_R_TETRA, ZR + T2[2]*EFF_R_TETRA ], -T2, D_TETRA, true],
-        [[ T3[0]*EFF_R_TETRA, T3[1]*EFF_R_TETRA, ZR + T3[2]*EFF_R_TETRA ], -T3, D_TETRA, true],
-        [[ T4[0]*EFF_R_TETRA, T4[1]*EFF_R_TETRA, ZR + T4[2]*EFF_R_TETRA ], -T4, D_TETRA, true]
+    [[ T1[0]*EFF_R_TETRA, T1[1]*EFF_R_TETRA, ZR + T1[2]*EFF_R_TETRA ], -T1, PEG_DEPTH, true],
+    [[ T2[0]*EFF_R_TETRA, T2[1]*EFF_R_TETRA, ZR + T2[2]*EFF_R_TETRA ], -T2, PEG_DEPTH, true],
+    [[ T3[0]*EFF_R_TETRA, T3[1]*EFF_R_TETRA, ZR + T3[2]*EFF_R_TETRA ], -T3, PEG_DEPTH, true],
+    [[ T4[0]*EFF_R_TETRA, T4[1]*EFF_R_TETRA, ZR + T4[2]*EFF_R_TETRA ], -T4, PEG_DEPTH, true],
 ];
-// A socket is [position, direction, depth, boss].
 PRESETS = [
-    STD,// preset 0 "Standard": both lobe poles axially, ring at ±x/±y radially.
-    TETRA,// preset 1 "Tetrahedral": 4 symmetric sockets for sp3 bonds, bosses enabled for structural support.
-    concat(STD, TETRA),// preset 2 All 
+    STD,                 // preset 0 "Standard": both poles axial, ring ±x/±y radial
+    TETRA,               // preset 1 "Tetrahedral": 4 symmetric sp3 sockets, bosses on
+    concat(STD, TETRA),  // preset 2 "All"
 ];
 sockets = PRESETS[preset];
 
+// --- Profile ---
 // Half of the revolved outline: sphere (from a0 up to the arc tangency),
 // R90 side-wall arc, then the ring tube out to its outer equator.
 function half_profile(zc, a0) = concat(
@@ -99,6 +124,7 @@ PROFILE = concat(
     [for (i = [len(upper) - 2 : -1 : 0]) [upper[i][0], 2 * ZR - upper[i][1]]]
 );
 
+// --- Modules ---
 // Rotate children so their +z axis points along dir.
 module orient(dir) {
     n = dir / norm(dir);
@@ -115,14 +141,23 @@ module socket_boss(s) {
         cylinder(h = s[2], d = hole_diameter + 2 * BOSS_WALL);
 }
 
+// Clear the insertion corridor: continue the boss-width channel past the boss,
+// out to open air, so nothing overhangs the peg's straight path in.
+module socket_clear(s) {
+    translate(s[0]) orient(s[1])
+        translate([0, 0, s[2]]) cylinder(h = 100, d = hole_diameter + 2 * BOSS_WALL);
+}
+
 module body() {
     rotate_extrude() polygon(PROFILE);
 }
 
+// --- Assembly ---
 difference() {
     union() {
         body();
         for (s = sockets) if (s[3]) socket_boss(s);
     }
     for (s = sockets) socket_hole(s);
+    for (s = sockets) if (s[4]) socket_clear(s);
 }
