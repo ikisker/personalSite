@@ -11,7 +11,7 @@
   },
   {
     "id": "d-z2",
-    "name": "3d_z² orbital",
+    "name": "3dz² orbital",
     "scad": "models/d-z2.scad",
     "presets": [
       { "value": 0, "label": "Standard" },
@@ -25,8 +25,33 @@
   },
   {
     "id": "d-xy",
-    "name": "d_xy orbital",
+    "name": "dxy orbital",
     "scad": "models/d-xy.scad",
+    "presets": [
+      { "value": 0, "label": "Standard" },
+      { "value": 1, "label": "Equatorial Expanded" },
+      { "value": 2, "label": "Cuboctahedral" },
+      { "value": 3, "label": "All" }
+    ],
+    "diameter": { "min": 2.0, "max": 7.0, "default": 5.0, "step": 0.01 },
+    "phaseFn": "dxy",
+    "notes": null,
+    "component": null
+  },
+  {
+    "id": "d-xy-lobe",
+    "name": "dxy lobe",
+    "scad": "models/d-xy-lobe.scad",
+    "presets": [{ "value": 0, "label": "Standard" }],
+    "diameter": { "min": 2.0, "max": 7.0, "default": 5.0, "step": 0.01 },
+    "phaseFn": "lobe",
+    "notes": null,
+    "component": null
+  },
+  {
+    "id": "d-xy-center",
+    "name": "dxy center",
+    "scad": "models/d-xy-center.scad",
     "presets": [
       { "value": 0, "label": "Standard" },
       { "value": 1, "label": "Equatorial Expanded" },
